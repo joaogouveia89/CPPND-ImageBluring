@@ -88,7 +88,7 @@ BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPane
 }
 
 CustomImagePanel::CustomImagePanel(wxFrame *parent, std::string imagePath) :
- wxPanel(parent, wxID_ANY, wxPoint(20,100), wxSize(200, 100)), _imagePath(imagePath) {}
+ wxPanel(parent, wxID_ANY, wxPoint(20,100), wxSize(680, 300)), _imagePath(imagePath) {}
 
 void CustomImagePanel::paintEvent(wxPaintEvent &evt)
 {
@@ -105,7 +105,7 @@ void CustomImagePanel::paintNow()
 void CustomImagePanel::render(wxDC &dc)
 {
     // load backgroud image from file
-    wxImage image;
+    wxImage image(200, 100, true);
     image.LoadFile(_imagePath);
 
     // rescale image to fit window dimensions
