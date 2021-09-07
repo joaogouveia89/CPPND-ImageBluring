@@ -39,7 +39,7 @@ class LoadImageFrame : public wxPanel
 {
 private:
     // control elements
-    std::unique_ptr<wxButton*> _loadImageBt;
+    std::unique_ptr<wxButton> _loadImageBt;
     MainFrame* _mainFrame;
 
     void OnLoadImageClick( wxCommandEvent& event );
@@ -59,10 +59,12 @@ private:
     std::unique_ptr<wxSlider> _blurSlider;
     std::unique_ptr<CustomImagePanel> _imagePanel;
 
-
+    void OnSigmaChanged(wxScrollEvent& event);
 public:
     // constructor / desctructor
     BlurImageFrame(MainFrame* window, std::string imagePath);
+
+    DECLARE_EVENT_TABLE()
 };
 
 // frame containing all control elements
@@ -72,6 +74,7 @@ private:
     // control elements
     std::unique_ptr<LoadImageFrame> _loadImageFrame { nullptr };
     std::unique_ptr<BlurImageFrame> _blurImageFrame { nullptr };
+
 public:
     // constructor / desctructor
     void ShowLoadingImageFrame();
@@ -88,7 +91,7 @@ private:
 
 public:
     // constructor / desctructor
-    CustomImagePanel(wxFrame *parent, std::shared_ptr<Img>, wxSize containerSize);
+    CustomImagePanel(wxPanel *parent, std::shared_ptr<Img>, wxSize containerSize);
 
     // events
     void paintEvent(wxPaintEvent &evt);
@@ -110,6 +113,7 @@ public:
  enum
  {
     BUTTON_LOAD_IMAGE = wxID_HIGHEST + 1,
+    SLIDER_SIGMA = wxID_HIGHEST + 1,
  };
 
 

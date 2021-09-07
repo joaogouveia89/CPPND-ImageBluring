@@ -43,9 +43,9 @@ void MainFrame::ShowBlurImageFrame(std::string imagePath)
 }
 
 
-LoadImageFrame::LoadImageFrame(MainFrame* window): wxPanel(window), _mainFrame(window)
+LoadImageFrame::LoadImageFrame(MainFrame* window): wxPanel(window, wxID_ANY, wxDefaultPosition, wxSize(WINDOW_WIDTH, WINDOW_HEIGHT)), _mainFrame(window)
 {
-    _loadImageBt = std::make_unique<wxButton*>(new wxButton(this, BUTTON_LOAD_IMAGE, LOAD_IMAGE_LABEL , wxPoint(WINDOW_WIDTH/2 - 50, WINDOW_HEIGHT/2 - 50)));
+    _loadImageBt = std::make_unique<wxButton>(this, BUTTON_LOAD_IMAGE, LOAD_IMAGE_LABEL , wxPoint(WINDOW_WIDTH/2 - 50, WINDOW_HEIGHT/2 - 50));
 }
 
 
@@ -71,7 +71,7 @@ void LoadImageFrame::OnLoadImageClick( wxCommandEvent& event )
     delete _imageBrowseDialog;
 }
 
-BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPanel(window), _imagePath(imagePath)
+BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPanel(window, wxID_ANY, wxDefaultPosition, wxSize(WINDOW_WIDTH, WINDOW_HEIGHT)), _imagePath(imagePath)
 {
     wxSize imageContainerSize(680, 300);
 
@@ -79,8 +79,8 @@ BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPane
     _computedImages.emplace_back(std::move(std::make_shared<Img>(_imagePath, imageContainerSize)));
 
     _blurSlider = std::make_unique<wxSlider>(
-        window,
-        wxID_ANY,
+        this,
+        SLIDER_SIGMA,
         0,
         0,
         100,
@@ -89,12 +89,17 @@ BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPane
     );
 
     _imagePanel = std::make_unique<CustomImagePanel>(
-        window, std::move(_computedImages.front()), imageContainerSize
+        this, std::move(_computedImages.front()), imageContainerSize
     );
 }
 
-CustomImagePanel::CustomImagePanel(wxFrame *parent, std::shared_ptr<Img> currentImage, wxSize containerSize) :
- wxPanel(parent, wxID_ANY, wxPoint(20,100), containerSize), _currentImage(currentImage) {}
+void BlurImageFrame::OnSigmaChanged(wxScrollEvent& event)
+{
+    std::cout << "sigma changed to " << event.GetPosition() <<"\n";
+}
+
+CustomImagePanel::CustomImagePanel(wxPanel *parent, std::shared_ptr<Img> currentImage, wxSize containerSize) :
+ wxPanel(parent, wxID_ANY, wxPoint(20,120), containerSize), _currentImage(currentImage) {}
 
 void CustomImagePanel::paintEvent(wxPaintEvent &evt)
 {
@@ -121,9 +126,14 @@ BEGIN_EVENT_TABLE(LoadImageFrame, wxPanel)
 EVT_BUTTON (BUTTON_LOAD_IMAGE, LoadImageFrame::OnLoadImageClick )
 END_EVENT_TABLE()
 
+BEGIN_EVENT_TABLE(BlurImageFrame, wxPanel)
+EVT_COMMAND_SCROLL(SLIDER_SIGMA, BlurImageFrame::OnSigmaChanged) // catch scroll events on SLIDER_SIGMA
+END_EVENT_TABLE()
+
 BEGIN_EVENT_TABLE(MainPanelDialog, wxPanel)
 EVT_PAINT(MainPanelDialog::paintEvent) // catch paint events
 END_EVENT_TABLE()
+
 
 MainPanelDialog::MainPanelDialog(wxWindow *parent, wxWindowID id){}
 
