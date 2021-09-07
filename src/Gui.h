@@ -4,10 +4,10 @@
 #include <wx/wx.h>
 #include <memory>
 #include <string>
+#include "Img.h"
 
 class MainFrame; // forward declaration
 class CustomImagePanel; // forward declaration
-
 
 static constexpr int WINDOW_WIDTH = 720;
 static constexpr int WINDOW_HEIGHT= 480;
@@ -82,12 +82,11 @@ class CustomImagePanel : public wxPanel
 {
 private:
     // control elements
-    wxImage _image;
-    std::string _imagePath;
+    std::shared_ptr<Img> _currentImage;
 
 public:
     // constructor / desctructor
-    CustomImagePanel(wxFrame *parent, std::string imagePath);
+    CustomImagePanel(wxFrame *parent, std::shared_ptr<Img>, wxSize containerSize);
 
     // events
     void paintEvent(wxPaintEvent &evt);

@@ -1,6 +1,4 @@
 #include "Gui.h"
-#include <wx/file.h>
-#include <wx/mstream.h>
 #include <iostream>
 
 IMPLEMENT_APP(ImageBlurringApp);
@@ -75,6 +73,10 @@ void LoadImageFrame::OnLoadImageClick( wxCommandEvent& event )
 
 BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPanel(window), _imagePath(imagePath)
 {
+    wxSize imageContainerSize(680, 300);
+
+    std::shared_ptr<Img> img = std::make_shared<Img>(_imagePath, imageContainerSize);
+
     _blurSlider = std::make_unique<wxSlider>(
         window,
         wxID_ANY,
@@ -86,12 +88,12 @@ BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPane
     );
 
     _imagePanel = std::make_unique<CustomImagePanel>(
-        window, imagePath
+        window, std::move(img), imageContainerSize
     );
 }
 
-CustomImagePanel::CustomImagePanel(wxFrame *parent, std::string imagePath) :
- wxPanel(parent, wxID_ANY, wxPoint(20,100), wxSize(680, 300)), _imagePath(imagePath) {}
+CustomImagePanel::CustomImagePanel(wxFrame *parent, std::shared_ptr<Img> currentImage, wxSize containerSize) :
+ wxPanel(parent, wxID_ANY, wxPoint(20,100), containerSize), _currentImage(currentImage) {}
 
 void CustomImagePanel::paintEvent(wxPaintEvent &evt)
 {
@@ -107,28 +109,7 @@ void CustomImagePanel::paintNow()
 
 void CustomImagePanel::render(wxDC &dc)
 {
-    wxFile file(_imagePath);
-    if (file.IsOpened())
-    {
-        wxFileOffset len = file.Length();
-        size_t dataSize = (size_t)len;
-        void *data = malloc(dataSize);
-         if ( file.Read(data, dataSize) != len )
-        {
-            wxLogError("Reading bitmap file failed");
-        }
-        else
-        {
-            wxMemoryInputStream stream(data, dataSize);
-            wxSize sz = this->GetSize();
-            _image.LoadFile(stream, wxBITMAP_TYPE_BMP);
-            wxImage reescaled = _image.Rescale(sz.GetWidth(), sz.GetHeight(), wxIMAGE_QUALITY_HIGH);
-            dc.DrawBitmap(reescaled, 0, 0, false);
-        }
-    }
-    else{
-        wxLogError("Could not load image file");
-    }
+    dc.DrawBitmap(_currentImage->Bitmap(), 0, 0, false);
 }
 
 BEGIN_EVENT_TABLE(CustomImagePanel, wxPanel)
