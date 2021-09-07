@@ -83,10 +83,12 @@ BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPane
         SLIDER_SIGMA,
         0,
         0,
-        100,
+        20,
         wxDefaultPosition,
         wxSize(WINDOW_WIDTH, wxDefaultSize.GetHeight())
     );
+
+    _blurSlider->SetPageSize(10);
 
     _imagePanel = std::make_unique<CustomImagePanel>(
         this, std::move(_computedImages.front()), imageContainerSize
@@ -95,7 +97,11 @@ BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPane
 
 void BlurImageFrame::OnSigmaChanged(wxScrollEvent& event)
 {
-    std::cout << "sigma changed to " << event.GetPosition() <<"\n";
+    int currentPosition = event.GetPosition();
+    if(currentPosition != lastSelectedSigma){
+        lastSelectedSigma = currentPosition;
+        std::cout << "pos = " << currentPosition << "\n";
+    }
 }
 
 CustomImagePanel::CustomImagePanel(wxPanel *parent, std::shared_ptr<Img> currentImage, wxSize containerSize) :

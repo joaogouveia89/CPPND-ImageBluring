@@ -14,6 +14,8 @@ private:
     wxImage _bitmap;
     wxImage _originalBitmap;
     double sigma { 0 };
+    void* data { NULL }; // https://stackoverflow.com/questions/59765957/returning-a-unique-void-pointer-from-a-function
+    // pass to unique_ptr
     
 public:
     Img(std::string path, wxSize parentContainerSize);

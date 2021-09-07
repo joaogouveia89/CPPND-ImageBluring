@@ -7,7 +7,7 @@ Img::Img(std::string path, wxSize parentContainerSize)
     {
         wxFileOffset len = file.Length();
         size_t dataSize = (size_t)len;
-        void *data = malloc(dataSize); //used a raw pointer here as it will be deallocated by the end of this constructor
+        data = malloc(dataSize); //used a raw pointer here as it will be deallocated by the end of this constructor
          if ( file.Read(data, dataSize) != len )
         {
             wxLogError("Reading bitmap file failed");
@@ -21,7 +21,6 @@ Img::Img(std::string path, wxSize parentContainerSize)
             _originalBitmap = _bitmap;
         }
         isOriginal = true;
-        delete[] data;
     }
     else{
         wxLogError("Could not load image file");

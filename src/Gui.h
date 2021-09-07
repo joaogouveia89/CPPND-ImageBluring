@@ -58,6 +58,7 @@ private:
     std::vector<std::shared_ptr<Img>> _computedImages;
     std::unique_ptr<wxSlider> _blurSlider;
     std::unique_ptr<CustomImagePanel> _imagePanel;
+    int lastSelectedSigma { 0 };
 
     void OnSigmaChanged(wxScrollEvent& event);
 public:
