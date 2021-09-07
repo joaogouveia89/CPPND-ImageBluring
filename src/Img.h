@@ -17,7 +17,6 @@ private:
     
 public:
     Img(std::string path, wxSize parentContainerSize);
-    Img();
 
     wxImage Bitmap() const { return _bitmap; }
 };

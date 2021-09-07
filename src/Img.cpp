@@ -26,5 +26,3 @@ Img::Img(std::string path, wxSize parentContainerSize)
         wxLogError("Could not load image file");
     }
 }
-
-Img::Img(){}
