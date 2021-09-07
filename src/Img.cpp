@@ -26,3 +26,10 @@ Img::Img(std::string path, wxSize parentContainerSize)
         wxLogError("Could not load image file");
     }
 }
+
+Img::Img(Img& img, double sigma )
+{
+    this->data = img.data;
+    this->sigma = sigma;
+    this->_originalBitmap = img._originalBitmap;
+}
