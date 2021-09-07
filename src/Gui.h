@@ -4,6 +4,7 @@
 #include <wx/wx.h>
 #include <memory>
 #include <string>
+#include <vector>
 #include "Img.h"
 
 class MainFrame; // forward declaration
@@ -54,6 +55,7 @@ class BlurImageFrame : public wxPanel
 {
 private:
     std::string _imagePath;
+    std::vector<std::shared_ptr<Img>> _computedImages;
     std::unique_ptr<wxSlider> _blurSlider;
     std::unique_ptr<CustomImagePanel> _imagePanel;
 

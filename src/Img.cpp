@@ -20,6 +20,7 @@ Img::Img(std::string path, wxSize parentContainerSize)
             _bitmap = rawImage.Rescale(parentContainerSize.GetWidth(), parentContainerSize.GetHeight(), wxIMAGE_QUALITY_HIGH);
             _originalBitmap = _bitmap;
         }
+        isOriginal = true;
         delete[] data;
     }
     else{

@@ -75,7 +75,8 @@ BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPane
 {
     wxSize imageContainerSize(680, 300);
 
-    std::shared_ptr<Img> img = std::make_shared<Img>(_imagePath, imageContainerSize);
+    //adding the first(original) image to the computed vector
+    _computedImages.emplace_back(std::move(std::make_shared<Img>(_imagePath, imageContainerSize)));
 
     _blurSlider = std::make_unique<wxSlider>(
         window,
@@ -88,7 +89,7 @@ BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPane
     );
 
     _imagePanel = std::make_unique<CustomImagePanel>(
-        window, std::move(img), imageContainerSize
+        window, std::move(_computedImages.front()), imageContainerSize
     );
 }
 
