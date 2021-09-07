@@ -1,4 +1,7 @@
 #include "Gui.h"
+#include <wx/file.h>
+#include <wx/mstream.h>
+#include <iostream>
 
 IMPLEMENT_APP(ImageBlurringApp);
 
@@ -52,8 +55,8 @@ void LoadImageFrame::OnLoadImageClick( wxCommandEvent& event )
 {
     wxFileDialog* _imageBrowseDialog = new
         wxFileDialog(
-            this, "Choose an image to open", wxEmptyString, wxEmptyString, 
-            "Image files (*.jpg *.jpeg *.png)|*.jpg;*.jpeg;*.png)",
+            this, "Choose an bitmap to open", wxEmptyString, wxEmptyString, 
+            "Bitmap files (*.bmp)|*.bmp;)",
             wxFD_OPEN, wxDefaultPosition
         );
 
@@ -104,16 +107,28 @@ void CustomImagePanel::paintNow()
 
 void CustomImagePanel::render(wxDC &dc)
 {
-    // load backgroud image from file
-    wxImage image(200, 100, true);
-    image.LoadFile(_imagePath);
-
-    // rescale image to fit window dimensions
-    wxSize sz = this->GetSize();
-    wxImage imgSmall = image.Rescale(sz.GetWidth(), sz.GetHeight(), wxIMAGE_QUALITY_HIGH);
-    _image = wxBitmap(imgSmall);
-    
-    dc.DrawBitmap(_image, 0, 0, false);
+    wxFile file(_imagePath);
+    if (file.IsOpened())
+    {
+        wxFileOffset len = file.Length();
+        size_t dataSize = (size_t)len;
+        void *data = malloc(dataSize);
+         if ( file.Read(data, dataSize) != len )
+        {
+            wxLogError("Reading bitmap file failed");
+        }
+        else
+        {
+            wxMemoryInputStream stream(data, dataSize);
+            wxSize sz = this->GetSize();
+            _image.LoadFile(stream, wxBITMAP_TYPE_BMP);
+            wxImage reescaled = _image.Rescale(sz.GetWidth(), sz.GetHeight(), wxIMAGE_QUALITY_HIGH);
+            dc.DrawBitmap(reescaled, 0, 0, false);
+        }
+    }
+    else{
+        wxLogError("Could not load image file");
+    }
 }
 
 BEGIN_EVENT_TABLE(CustomImagePanel, wxPanel)

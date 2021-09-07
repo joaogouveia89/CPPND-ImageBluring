@@ -82,7 +82,7 @@ class CustomImagePanel : public wxPanel
 {
 private:
     // control elements
-    wxBitmap _image;
+    wxImage _image;
     std::string _imagePath;
 
 public:
