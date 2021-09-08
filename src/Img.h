@@ -14,6 +14,9 @@ struct ptr_deleter {
     }
 };
 
+// https://docs.wxwidgets.org/3.0/classwx_file_name.html#a6703bfd4f587b35926d5c2949bc11918    https://docs.wxwidgets.org/3.0/classwx_image.html
+// use above to support multiple image formats
+
 class Img
 {
 private:
