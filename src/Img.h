@@ -20,8 +20,8 @@ private:
     bool isOriginal { false };
     bool isValid { false };
     double sigma { 0 };
-    std::shared_ptr<void*> _originalData; 
-    std::unique_ptr<void*, ptr_deleter> _handledData { nullptr };
+    std::shared_ptr<void> _originalData; 
+    std::unique_ptr<void, ptr_deleter> _handledData { nullptr };
     size_t _dataSize { 0 };
     int _parentWidth;
     int _parentHeight;

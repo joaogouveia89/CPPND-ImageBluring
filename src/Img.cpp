@@ -13,7 +13,7 @@ Img::Img(std::string path, wxSize parentContainerSize)
     {
         wxFileOffset len = file.Length();
         _dataSize = (size_t)len;
-        _originalData = std::make_shared<void*>(malloc(_dataSize)); 
+        _originalData = std::shared_ptr<void>{ malloc(len), free }; // _originalData is a `std::shared_ptr<void>
         std::cout << "_originalData ok"<< std::endl;
          if ( file.Read(_originalData.get(), _dataSize) != len )
         {
