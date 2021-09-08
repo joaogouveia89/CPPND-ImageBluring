@@ -42,29 +42,34 @@ Img::Img(std::string path, wxSize parentContainerSize)
 
 Img::Img(Img& img, double sigma )
 {
-  
+  //TODO: To be implemented
 }
 
 Img::~Img()
 {
+    //TODO: To be implemented
     std::cout << "Img Destructor"<< std::endl;
 }
 
 
 Img::Img(const Img &source){
+    //TODO: To be implemented
      std::cout << "Img::COPYING content " << std::endl;
 }
 
 Img& Img::operator=(const Img &source){
+    //TODO: To be implemented
     std::cout << "Img::ASSIGNING content" << std::endl;
     return *this;
 }
 
 Img::Img(Img &&source){
+    //TODO: To be implemented
     std::cout << "Img::MOVING (c’tor)" << std::endl;
 }
 
 Img &Img::operator=(Img &&source){
+    //TODO: To be implemented
     std::cout << "Img::MOVING (assign) " << std::endl;
     return *this;
 }
