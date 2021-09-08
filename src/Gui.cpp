@@ -121,7 +121,7 @@ void CustomImagePanel::paintNow()
 
 void CustomImagePanel::render(wxDC &dc)
 {
-    dc.DrawBitmap(_currentImage->Bitmap(), 0, 0, false);
+    dc.DrawBitmap(_currentImage->toWxBitmap(), 0, 0, false);
 }
 
 BEGIN_EVENT_TABLE(CustomImagePanel, wxPanel)

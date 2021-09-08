@@ -1,35 +1,47 @@
 #include "Img.h"
+#include <sstream>
 
 Img::Img(std::string path, wxSize parentContainerSize)
 {
+    std::stringstream errorStream;
+    errorStream << "Fail on construct image object ";
+    errorStream << this;
+
     wxFile file(path);
     if (file.IsOpened())
     {
         wxFileOffset len = file.Length();
-        size_t dataSize = (size_t)len;
-        data = malloc(dataSize); //used a raw pointer here as it will be deallocated by the end of this constructor
-         if ( file.Read(data, dataSize) != len )
+        _dataSize = (size_t)len;
+        _originalData = malloc(_dataSize); 
+         if ( file.Read(_originalData, _dataSize) != len )
         {
-            wxLogError("Reading bitmap file failed");
+            errorStream << ": Could not read the file";
+            wxString error(errorStream.str().c_str(), wxConvUTF8);
+            wxLogError(error);
         }
         else
         {
-            _stream = std::make_unique<wxMemoryInputStream>(data, dataSize);
-            wxImage rawImage;
-            rawImage.LoadFile(*_stream.get(), wxBITMAP_TYPE_BMP);
-            _bitmap = rawImage.Rescale(parentContainerSize.GetWidth(), parentContainerSize.GetHeight(), wxIMAGE_QUALITY_HIGH);
-            _originalBitmap = _bitmap;
+            isOriginal = true;
+            isValid = true;
+            _parentWidth = parentContainerSize.GetWidth();
+            _parentHeight = parentContainerSize.GetHeight();
         }
-        isOriginal = true;
     }
     else{
-        wxLogError("Could not load image file");
+        errorStream << ": Could not open the file";
+        wxString error(errorStream.str().c_str(), wxConvUTF8);
+        wxLogError(error);
     }
 }
 
 Img::Img(Img& img, double sigma )
 {
-    this->data = img.data;
-    this->sigma = sigma;
-    this->_originalBitmap = img._originalBitmap;
+  
+}
+
+wxImage Img::toWxBitmap() const{
+    wxMemoryInputStream stream(_handledData == NULL ? _originalData : _handledData, _dataSize);
+    wxImage unhandled;
+    unhandled.LoadFile(stream, wxBITMAP_TYPE_BMP);
+    return unhandled.Rescale(_parentWidth, _parentHeight, wxIMAGE_QUALITY_HIGH);
 }
