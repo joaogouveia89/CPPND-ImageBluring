@@ -14,10 +14,8 @@ Img::Img(std::string path, wxSize parentContainerSize)
         wxFileOffset len = file.Length();
         _dataSize = (size_t)len;
         _originalData = std::shared_ptr<void>{ malloc(len), free }; // _originalData is a `std::shared_ptr<void>
-        std::cout << "_originalData ok"<< std::endl;
          if ( file.Read(_originalData.get(), _dataSize) != len )
         {
-            std::cout << "Could not read the file"<< std::endl;
             errorStream << ": Could not read the file";
             wxString error(errorStream.str().c_str(), wxConvUTF8);
             wxLogError(error);
@@ -26,10 +24,8 @@ Img::Img(std::string path, wxSize parentContainerSize)
         {
             isOriginal = true;
             isValid = true;
-            std::cout << "missing parent things"<< std::endl;
             _parentWidth = parentContainerSize.GetWidth();
             _parentHeight = parentContainerSize.GetHeight();
-            std::cout << "all ok"<< std::endl;
         }
     }
     else{
@@ -37,7 +33,6 @@ Img::Img(std::string path, wxSize parentContainerSize)
         wxString error(errorStream.str().c_str(), wxConvUTF8);
         wxLogError(error);
     }
-    std::cout << "Finished Img Regular Ctr"<< std::endl;
 }
 
 Img::Img(Img& img, double sigma )
