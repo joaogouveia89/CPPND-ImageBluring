@@ -1,6 +1,4 @@
 #include "Img.h"
-#include <sstream>
-
 
 Img::Img(std::shared_ptr<void> rawData, size_t dataSize, double sigma) : _buffer(rawData), _dataSize(dataSize), _sigma(sigma){}
 
