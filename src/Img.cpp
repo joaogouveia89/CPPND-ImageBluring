@@ -3,7 +3,6 @@
 
 Img::Img(std::string path, wxSize parentContainerSize)
 {
-    std::cout << "Img Regular Ctr"<< std::endl;
     std::stringstream errorStream;
     errorStream << "Fail on construct image object ";
     errorStream << this;

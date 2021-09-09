@@ -6,14 +6,6 @@
 #include <memory>
 #include <string>
 
-// thanks to https://stackoverflow.com/questions/59765957/returning-a-unique-void-pointer-from-a-function
-struct ptr_deleter {
-    void operator()(void *data) const noexcept {
-        if(data != nullptr)
-            std::free(data);
-    }
-};
-
 // https://docs.wxwidgets.org/3.0/classwx_file_name.html#a6703bfd4f587b35926d5c2949bc11918    https://docs.wxwidgets.org/3.0/classwx_image.html
 // use above to support multiple image formats
 
@@ -24,7 +16,6 @@ private:
     bool isValid { false };
     double sigma { 0 };
     std::shared_ptr<void> _originalData; 
-    std::unique_ptr<void, ptr_deleter> _handledData { nullptr };
     size_t _dataSize { 0 };
     int _parentWidth;
     int _parentHeight;
