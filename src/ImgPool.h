@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "Img.h"
 
@@ -22,6 +23,8 @@ private:
     size_t _dataSize { 0 };
     std::shared_ptr<void> _originalImageRawData;
     double currentSigma{ 0 };
+    int _inputWidth { 0 };
+    int _inputHeight { 0 };
 public:
     wxImage CurrentImage();
     std::shared_ptr<Img> AskFor(double sigma);

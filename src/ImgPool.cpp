@@ -21,7 +21,16 @@ ImgPool::ImgPool(std::string imagePath)
         }
         else
         {
-            _images.emplace_back(std::move(std::make_shared<Img>(_originalImageRawData, _dataSize, 0)));
+            /* TODO: Find a way to get the width and height of bitmap platform independant,
+            without constructing wximage object.
+            This data is necessary to construct the Mat object in Compute function
+            */
+            wxMemoryInputStream stream(_originalImageRawData.get(), _dataSize);
+            wxImage originalImage;
+            originalImage.LoadFile(stream, wxBITMAP_TYPE_BMP);
+            _inputWidth = originalImage.GetWidth();
+            _inputHeight = originalImage.GetHeight();
+            _images.emplace_back(std::move(std::make_shared<Img>(_originalImageRawData, _dataSize, 0, _inputWidth, _inputHeight)));
         }
     }
     else{
