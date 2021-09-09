@@ -3,6 +3,7 @@
 #include <wx/wx.h>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "Img.h"
 
@@ -17,14 +18,15 @@ If user moves the seekbar, this buffer has to be updated
 
 class ImgPool{
 private:
-    std::vector<std::unique_ptr<Img>> _images;
+    std::vector<std::shared_ptr<Img>> _images;
+    size_t _dataSize { 0 };
     std::shared_ptr<void> _originalImageRawData;
     double currentSigma{ 0 };
 public:
     wxImage CurrentImage();
-    void AskFor(double sigma);
+    std::shared_ptr<Img> AskFor(double sigma);
 
-    ImgPool(std::string imagePath, wxSize parentContainerSize);
+    ImgPool(std::string imagePath);
 };
 
 #endif

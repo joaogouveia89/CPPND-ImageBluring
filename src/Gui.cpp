@@ -76,11 +76,8 @@ BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPane
     wxSize imageContainerSize(680, 300);
 
     //adding the first(original) image to the computed vector
-    std::cout << "before\n";
-    std::shared_ptr<Img> img = std::make_shared<Img>(_imagePath, imageContainerSize);
-    std::cout << "created img\n";
-    _computedImages.emplace_back(img);
-    std::cout << "emplaced img\n";
+
+    _imagePool = std::make_unique<ImgPool>(_imagePath);
 
     _blurSlider = std::make_unique<wxSlider>(
         this,
@@ -95,7 +92,7 @@ BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPane
     _blurSlider->SetPageSize(10);
 
     _imagePanel = std::make_unique<CustomImagePanel>(
-        this, std::move(_computedImages.front()), imageContainerSize
+        this, _imagePool->AskFor(0), imageContainerSize
     );
 }
 
@@ -125,7 +122,7 @@ void CustomImagePanel::paintNow()
 
 void CustomImagePanel::render(wxDC &dc)
 {
-    dc.DrawBitmap(_currentImage->toWxBitmap(), 0, 0, false);
+    dc.DrawBitmap(_currentImage->toWxBitmap(this->GetSize().GetWidth(), this->GetSize().GetHeight()), 0, 0, false);
 }
 
 BEGIN_EVENT_TABLE(CustomImagePanel, wxPanel)

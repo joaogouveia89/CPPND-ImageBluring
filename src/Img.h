@@ -12,28 +12,16 @@
 class Img
 {
 private:
-    bool isOriginal { false };
-    bool isValid { false };
-    double sigma { 0 };
-    std::shared_ptr<void> _originalData; 
-    size_t _dataSize { 0 };
-    int _parentWidth;
-    int _parentHeight;
+    double _sigma;
+    std::shared_ptr<void> _buffer;
+    size_t _dataSize;
     // pass to unique_ptr 
     // Mat to raw pointer https://stackoverflow.com/questions/61042167/how-to-convert-cvmat-to-void
     
 public:
-    Img(std::string path, wxSize parentContainerSize);
-    // Rule of Five
-    ~Img(); // 1: destructor
-    Img(const Img &source); // 2: copy constructor
-    Img &operator=(const Img &source); // 3: copy assignement operator
-    Img(Img &&source); // 4: move constructor
-    Img &operator=(Img &&source); // 5: move assignment operator
+    Img(std::shared_ptr<void> rawData, size_t dataSize, double sigma);
 
-    Img(Img& img, double sigma);
-
-    wxImage toWxBitmap() const;
+    wxImage toWxBitmap(const int parentWidth, const int parentHeight) const;
 };
 
 #endif

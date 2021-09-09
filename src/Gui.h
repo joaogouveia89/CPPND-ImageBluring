@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "Img.h"
+#include "ImgPool.h"
 
 class MainFrame; // forward declaration
 class CustomImagePanel; // forward declaration
@@ -55,7 +55,7 @@ class BlurImageFrame : public wxPanel
 {
 private:
     std::string _imagePath;
-    std::vector<std::shared_ptr<Img>> _computedImages;
+    std::unique_ptr<ImgPool> _imagePool;
     std::unique_ptr<wxSlider> _blurSlider;
     std::unique_ptr<CustomImagePanel> _imagePanel;
     int lastSelectedSigma { 0 };
