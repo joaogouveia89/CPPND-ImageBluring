@@ -17,7 +17,7 @@ private:
     double _sigma;
     std::shared_ptr<void> _buffer;
     size_t _dataSize;
-    std::future<std::shared_ptr<void>> _computedResult;
+    std::future<void> _computedResult;
     int _width { 0 };
     int _height { 0 };
 

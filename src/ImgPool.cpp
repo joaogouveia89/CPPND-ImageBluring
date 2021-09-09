@@ -13,6 +13,8 @@ ImgPool::ImgPool(std::string imagePath)
         wxFileOffset len = file.Length();
         _dataSize = (size_t)len;
         _originalImageRawData = std::shared_ptr<void>{ malloc(len), free }; // _originalData is a `std::shared_ptr<void>
+        std::cout << "_originalImageRawData = " << sizeof(_originalImageRawData.get()) << "\n";
+        std::cout << "len = " << len << "\n";
          if ( file.Read(_originalImageRawData.get(), _dataSize) != len )
         {
             errorStream << ": Could not read the input file";
