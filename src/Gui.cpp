@@ -102,6 +102,7 @@ void BlurImageFrame::OnSigmaChanged(wxScrollEvent& event)
     if(currentPosition != lastSelectedSigma){
         lastSelectedSigma = currentPosition;
         std::cout << "pos = " << currentPosition << "\n";
+        _imagePanel->ReplaceImage(_imagePool->AskFor(12));
     }
 }
 
@@ -123,6 +124,12 @@ void CustomImagePanel::paintNow()
 void CustomImagePanel::render(wxDC &dc)
 {
     dc.DrawBitmap(_currentImage->toWxBitmap(this->GetSize().GetWidth(), this->GetSize().GetHeight()), 0, 0, false);
+}
+
+void CustomImagePanel::ReplaceImage(std::shared_ptr<Img> img)
+{
+    _currentImage = img;
+    this->Refresh();
 }
 
 BEGIN_EVENT_TABLE(CustomImagePanel, wxPanel)

@@ -2,6 +2,7 @@
 #define GUI_H
 
 #include <wx/wx.h>
+#include "wx/dcbuffer.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -98,6 +99,8 @@ public:
     void paintEvent(wxPaintEvent &evt);
     void paintNow();
     void render(wxDC &dc);
+
+    void ReplaceImage(std::shared_ptr<Img> img);
 
     DECLARE_EVENT_TABLE()
 };

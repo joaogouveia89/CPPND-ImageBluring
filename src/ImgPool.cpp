@@ -13,8 +13,6 @@ ImgPool::ImgPool(std::string imagePath)
         wxFileOffset len = file.Length();
         _dataSize = (size_t)len;
         _originalImageRawData = std::shared_ptr<void>{ malloc(len), free }; // _originalData is a `std::shared_ptr<void>
-        std::cout << "_originalImageRawData = " << sizeof(_originalImageRawData.get()) << "\n";
-        std::cout << "len = " << len << "\n";
          if ( file.Read(_originalImageRawData.get(), _dataSize) != len )
         {
             errorStream << ": Could not read the input file";
@@ -33,6 +31,7 @@ ImgPool::ImgPool(std::string imagePath)
             _inputWidth = originalImage.GetWidth();
             _inputHeight = originalImage.GetHeight();
             _images.emplace_back(std::move(std::make_shared<Img>(_originalImageRawData, _dataSize, 0, _inputWidth, _inputHeight)));
+            _images.emplace_back(std::move(std::make_shared<Img>(_originalImageRawData, _dataSize, 15000, _inputWidth, _inputHeight)));
         }
     }
     else{
@@ -44,5 +43,13 @@ ImgPool::ImgPool(std::string imagePath)
 
 std::shared_ptr<Img> ImgPool::AskFor(double sigma)
 {
-    return _images.front();
+    if(sigma == 0){
+        std::cout << "returning front " << _images.front()->Sigma() << "\n";
+        return _images.front();
+    }
+    else{
+        std::cout << "returning back " << _images.back()->Sigma() << "\n";
+        return _images.back();
+    }
+    
 }

@@ -21,7 +21,7 @@ private:
     int _width { 0 };
     int _height { 0 };
 
-    std::shared_ptr<void> Compute();
+    void Compute();
     // pass to unique_ptr 
     // Mat to raw pointer https://stackoverflow.com/questions/61042167/how-to-convert-cvmat-to-void
     
@@ -29,6 +29,8 @@ public:
     Img(std::shared_ptr<void> originalRawData, size_t dataSize, double sigma, int width, int height);
 
     wxImage toWxBitmap(const int parentWidth, const int parentHeight) const;
+
+    double Sigma() const{ return _sigma; }
 };
 
 #endif
