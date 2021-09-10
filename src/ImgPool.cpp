@@ -1,55 +1,21 @@
 #include "ImgPool.h"
 
-#include<sstream>
 ImgPool::ImgPool(std::string imagePath)
 {
-    std::stringstream errorStream;
-    errorStream << "Fail on construct image pool object ";
-    errorStream << this;
 
-    wxFile file(imagePath);
-    if (file.IsOpened())
+    _originalImage = std::make_shared<cv::Mat>(cv::imread(imagePath));
+    if (_originalImage->data != NULL) /* see https://docs.opencv.org/4.5.2/d4/da8/group__imgcodecs.html#ga288b8b3da0892bd651fce07b3bbd3a56 */
     {
-        wxFileOffset len = file.Length();
-        _dataSize = (size_t)len;
-        _originalImageRawData = std::shared_ptr<void>{ malloc(len), free }; // _originalData is a `std::shared_ptr<void>
-         if ( file.Read(_originalImageRawData.get(), _dataSize) != len )
-        {
-            errorStream << ": Could not read the input file";
-            wxString error(errorStream.str().c_str(), wxConvUTF8);
-            wxLogError(error);
-        }
-        else
-        {
-            /* TODO: Find a way to get the width and height of bitmap platform independant,
-            without constructing wximage object.
-            This data is necessary to construct the Mat object in Compute function
-            */
-            wxMemoryInputStream stream(_originalImageRawData.get(), _dataSize);
-            wxImage originalImage;
-            originalImage.LoadFile(stream, wxBITMAP_TYPE_BMP);
-            _inputWidth = originalImage.GetWidth();
-            _inputHeight = originalImage.GetHeight();
-            _images.emplace_back(std::move(std::make_shared<Img>(_originalImageRawData, _dataSize, 0, _inputWidth, _inputHeight)));
-            _images.emplace_back(std::move(std::make_shared<Img>(_originalImageRawData, _dataSize, 15000, _inputWidth, _inputHeight)));
-        }
+        _images.emplace_back(std::move(std::make_shared<Img>(_originalImage, 0, _inputWidth, _inputHeight)));
     }
     else{
-        errorStream << ": Could not open the input file";
-        wxString error(errorStream.str().c_str(), wxConvUTF8);
+        std::string errorMessage = "Fail to open the file. Check if the file is missing, has improper permissions, is unsupported or an invalid format: check docs for more details: https://docs.opencv.org/4.5.2/d4/da8/group__imgcodecs.html#ga288b8b3da0892bd651fce07b3bbd3a56";
+        wxString error(errorMessage.c_str(), wxConvUTF8);
         wxLogError(error);
     }
 }
 
 std::shared_ptr<Img> ImgPool::AskFor(double sigma)
 {
-    if(sigma == 0){
-        std::cout << "returning front " << _images.front()->Sigma() << "\n";
-        return _images.front();
-    }
-    else{
-        std::cout << "returning back " << _images.back()->Sigma() << "\n";
-        return _images.back();
-    }
-    
+    return _images.front();
 }

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <opencv2/opencv.hpp>
 
 #include "Img.h"
 
@@ -21,7 +22,7 @@ class ImgPool{
 private:
     std::vector<std::shared_ptr<Img>> _images;
     size_t _dataSize { 0 };
-    std::shared_ptr<void> _originalImageRawData;
+    std::shared_ptr<cv::Mat> _originalImage;
     double currentSigma{ 0 };
     int _inputWidth { 0 };
     int _inputHeight { 0 };
