@@ -101,8 +101,7 @@ void BlurImageFrame::OnSigmaChanged(wxScrollEvent& event)
     int currentPosition = event.GetPosition();
     if(currentPosition != lastSelectedSigma){
         lastSelectedSigma = currentPosition;
-        std::cout << "pos = " << currentPosition << "\n";
-        _imagePanel->ReplaceImage(_imagePool->AskFor(12));
+        _imagePanel->ReplaceImage(_imagePool->AskFor(currentPosition));
     }
 }
 

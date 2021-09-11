@@ -26,4 +26,5 @@ void Img::Compute()
     }, _originalImage, Sigma());
     
     _result = std::make_shared<cv::Mat>(result.get());
+    readyForUsing = true;
 }

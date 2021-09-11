@@ -20,6 +20,7 @@ private:
     std::shared_ptr<cv::Mat> _originalImage;
     int _width { 0 };
     int _height { 0 };
+    bool readyForUsing{ false };
     
 public:
     Img(std::shared_ptr<cv::Mat> originalImage, double sigma, int width, int height);
@@ -29,6 +30,8 @@ public:
     double Sigma() const{ return _sigma; }
 
     void Compute();
+
+    bool IsReadyForUsing() const{ return readyForUsing; }
 };
 
 #endif
