@@ -26,3 +26,9 @@ This application uses the open cv function(GaussBlur) to blur a input image prov
 2. Make a build directory in the top level directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
 4. Run it: `./image-blurring`.
+
+## Project Structure
+
+1. Gui: Gui use wx widgets library to create the UI elements and it's handling entitites.
+2. ImgPool: This class handles all the images treatment, also keeps track of all treated images to display to the user, the idea is to avoid unecessary computing, if the user does not want big sigma values. If user wants, for example a sigma 10, it doesn't make sense to calculate sigma = 20.
+3. Img class to store the computed image with the gauss blur function
