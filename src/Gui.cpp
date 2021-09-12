@@ -98,13 +98,15 @@ BlurImageFrame::BlurImageFrame(MainFrame* window, std::string imagePath): wxPane
 
 void BlurImageFrame::OnSigmaChanged(wxScrollEvent& event)
 {
+    std::lock_guard<std::mutex> lck(mtx);
     std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+   
     std::chrono::duration<float> duration = now - lastSigmaChangedTime;
     if(duration.count() < SIGMA_CHANGE_DEBOUNCE_TIME) return;
     lastSigmaChangedTime = now;
 
     int currentPosition = event.GetPosition();
-    if(currentPosition != lastSelectedSigma){
+    if(currentPosition != lastSelectedSigma && _blurSlider->GetValue() == currentPosition){
         lastSelectedSigma = currentPosition;
         _imagePanel->ReplaceImage(_imagePool->AskFor(currentPosition));
     }

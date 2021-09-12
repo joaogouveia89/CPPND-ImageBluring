@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <mutex>
 #include "ImgPool.h"
 
 class MainFrame; // forward declaration
@@ -63,6 +64,7 @@ private:
     std::unique_ptr<CustomImagePanel> _imagePanel;
     int lastSelectedSigma { 0 };
     std::chrono::time_point<std::chrono::system_clock> lastSigmaChangedTime {std::chrono::system_clock::now() };
+    std::mutex mtx;
 
     void OnSigmaChanged(wxScrollEvent& event);
 public:

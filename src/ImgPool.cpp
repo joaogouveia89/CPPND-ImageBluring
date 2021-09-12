@@ -20,15 +20,40 @@ ImgPool::ImgPool(std::string imagePath)
 
 std::shared_ptr<Img> ImgPool::AskFor(double sigma)
 {
-    std::lock_guard<std::mutex> lck(mtx);
-
-    if(sigma >= _images.size() - 2 && !HasBeenCalculated(sigma))
+    if((sigma - 2) >= 0 && std::find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img) { return img->Sigma() == (sigma - 2); } ) == _images.end())
     {
-        _images.emplace_back(std::move(std::make_shared<Img>(_originalImage, sigma, _originalImage->rows, _originalImage->cols)));
+        _images.emplace_back(std::move(std::make_shared<Img>(_originalImage, sigma - 2, _originalImage->rows, _originalImage->cols)));
     }
 
-    std::shared_ptr<Img> asked = *(find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img){ return img->Sigma() == sigma; }));
+    if((sigma - 1) >= 0 && std::find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img) { return img->Sigma() == (sigma - 1); }) == _images.end())
+    {
+        _images.emplace_back(std::move(std::make_shared<Img>(_originalImage, sigma - 1, _originalImage->rows, _originalImage->cols)));
+    }
 
+    if(std::find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img) { return img->Sigma() == (sigma + 1); }) == _images.end())
+    {
+        _images.emplace_back(std::move(std::make_shared<Img>(_originalImage, sigma + 1, _originalImage->rows, _originalImage->cols)));
+    }
+
+    if(std::find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img) { return img->Sigma() == (sigma + 2); }) == _images.end())
+    {
+        _images.emplace_back(std::move(std::make_shared<Img>(_originalImage, sigma + 2, _originalImage->rows, _originalImage->cols)));
+    }
+    
+
+    auto askedIt = find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img){ return img->Sigma() == sigma; });
+
+    std::shared_ptr<Img> asked;
+
+    if(askedIt != _images.end())
+    {
+        asked = *askedIt;
+    }
+    else
+    {
+       asked = *_images.begin();
+    }
+    
     return asked;
 }
 
