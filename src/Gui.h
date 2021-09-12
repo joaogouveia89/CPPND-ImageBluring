@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <chrono>
 #include "ImgPool.h"
 
 class MainFrame; // forward declaration
@@ -14,6 +15,7 @@ class CustomImagePanel; // forward declaration
 static constexpr int WINDOW_WIDTH = 720;
 static constexpr int WINDOW_HEIGHT= 480;
 static constexpr char APP_NAME[] = "Image Bluring";
+static constexpr double SIGMA_CHANGE_DEBOUNCE_TIME = 0.2;
 
 static constexpr char LOAD_IMAGE_LABEL[] = "Load image";
 
@@ -60,6 +62,7 @@ private:
     std::unique_ptr<wxSlider> _blurSlider;
     std::unique_ptr<CustomImagePanel> _imagePanel;
     int lastSelectedSigma { 0 };
+    std::chrono::time_point<std::chrono::system_clock> lastSigmaChangedTime {std::chrono::system_clock::now() };
 
     void OnSigmaChanged(wxScrollEvent& event);
 public:

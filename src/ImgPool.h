@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <mutex>
 #include <opencv2/opencv.hpp>
 
 #include "Img.h"
@@ -26,6 +27,7 @@ private:
     double currentSigma{ 0 };
     int _inputWidth { 0 };
     int _inputHeight { 0 };
+    std::mutex mtx;
 
     bool HasBeenCalculated(double sigma);
 public:

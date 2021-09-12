@@ -1,5 +1,6 @@
 #include "ImgPool.h"
 
+
 ImgPool::ImgPool(std::string imagePath)
 {
 
@@ -19,29 +20,21 @@ ImgPool::ImgPool(std::string imagePath)
 
 std::shared_ptr<Img> ImgPool::AskFor(double sigma)
 {
+    std::lock_guard<std::mutex> lck(mtx);
+
     if(sigma >= _images.size() - 2 && !HasBeenCalculated(sigma))
     {
-        std::cout << "Calculating sigma = " << sigma << "\n";
         _images.emplace_back(std::move(std::make_shared<Img>(_originalImage, sigma, _originalImage->rows, _originalImage->cols)));
     }
 
-    std::shared_ptr<Img> asked = _images[sigma];
-    if(!_images[sigma]->IsReadyForUsing())
-    {
-        // getting last "ready for using" image
-        for(auto sp : _images)
-        {
-            if(sp->IsReadyForUsing())
-            {
-                asked = sp;
-            }
-        }
-    }
+    std::shared_ptr<Img> asked = *(find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img){ return img->Sigma() == sigma; }));
 
     return asked;
 }
+
 
 bool ImgPool::HasBeenCalculated(double sigma)
 {
     return find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img){ return img->Sigma() == sigma; }) != _images.end();
 }
+
