@@ -5,8 +5,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <mutex>
-#include <condition_variable>
+#include <math.h>
 #include <opencv2/opencv.hpp>
 
 #include "Img.h"
@@ -33,6 +32,9 @@ private:
     double currentSigma{ 0 };
     int _inputWidth { 0 };
     int _inputHeight { 0 };
+    int advanceRatio { 0 };
+
+    void CalculateAdvanceRatio();
 
 public:
     wxImage CurrentImage();

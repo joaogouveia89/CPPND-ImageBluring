@@ -7,9 +7,14 @@ ImgPool::ImgPool(std::string imagePath)
     _originalImage = cv::imread(imagePath);
     if (_originalImage.data != NULL) /* see https://docs.opencv.org/4.5.2/d4/da8/group__imgcodecs.html#ga288b8b3da0892bd651fce07b3bbd3a56 */
     {
-        _images.emplace_back(std::move(std::make_shared<Img>(&_originalImage, 0, _originalImage.rows, _originalImage.cols)));
-        _images.emplace_back(std::move(std::make_shared<Img>(&_originalImage, 1, _originalImage.rows, _originalImage.cols)));
-        _images.emplace_back(std::move(std::make_shared<Img>(&_originalImage, 2, _originalImage.rows, _originalImage.cols)));
+        _inputWidth = _originalImage.rows;
+        _inputHeight = _originalImage.cols;
+
+        CalculateAdvanceRatio();
+
+        for(int i = 0; i < advanceRatio; ++i){
+            _images.emplace_back(std::move(std::make_shared<Img>(&_originalImage, i, _inputWidth, _inputHeight)));
+        }
     }
     else{
         std::string errorMessage = "Fail to open the file. Check if the file is missing, has improper permissions, is unsupported or an invalid format: check docs for more details: https://docs.opencv.org/4.5.2/d4/da8/group__imgcodecs.html#ga288b8b3da0892bd651fce07b3bbd3a56";
@@ -18,9 +23,27 @@ ImgPool::ImgPool(std::string imagePath)
     }
 }
 
-std::shared_ptr<Img>  ImgPool::AskFor(double sigma)
+void ImgPool::CalculateAdvanceRatio(){
+    //purely experimental with these values
+    int factor = ceil((_inputWidth * _inputHeight) /(double) 100000);
+    advanceRatio = ceil(1.8 + 0.023 * factor + 0.000012 * factor * factor);
+    if(advanceRatio < 0) advanceRatio = 2;
+    else if(advanceRatio > 20) advanceRatio = 10;
+}
+
+std::shared_ptr<Img> ImgPool::AskFor(double sigma)
 {
-    std::vector<double> sigmas{ sigma - 2, sigma - 1, sigma, sigma + 1, sigma + 2 };
+    std::vector<double> sigmas;
+    int s;
+
+    for(int i = 0; i < advanceRatio; ++i){
+        if(i == 0){
+            sigmas.emplace_back(sigma);
+        }else{
+            sigmas.emplace_back(sigma - i);
+            sigmas.emplace_back(sigma + i);
+        }
+    }
 
     for(auto img : _images)
     {
