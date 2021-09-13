@@ -33,9 +33,7 @@ private:
     double currentSigma{ 0 };
     int _inputWidth { 0 };
     int _inputHeight { 0 };
-    std::mutex mtx;
 
-    bool HasBeenCalculated(double sigma);
 public:
     wxImage CurrentImage();
     std::shared_ptr<Img>  AskFor(double sigma);

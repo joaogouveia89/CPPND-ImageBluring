@@ -54,10 +54,3 @@ std::shared_ptr<Img>  ImgPool::AskFor(double sigma)
     
     return asked;
 }
-
-
-bool ImgPool::HasBeenCalculated(double sigma)
-{
-    return find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img){ return img->Sigma() == sigma; }) != _images.end();
-}
-
