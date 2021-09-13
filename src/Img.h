@@ -1,8 +1,6 @@
 #ifndef IMG_H
 #define IMG_H
 #include <wx/wx.h>
-#include <wx/file.h>
-#include <wx/mstream.h>
 #include <future>
 #include <memory>
 #include <string>

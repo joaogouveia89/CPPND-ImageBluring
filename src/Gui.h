@@ -2,12 +2,9 @@
 #define GUI_H
 
 #include <wx/wx.h>
-#include "wx/dcbuffer.h"
 #include <memory>
 #include <string>
 #include <vector>
-#include <chrono>
-#include <mutex>
 #include "ImgPool.h"
 
 class MainFrame; // forward declaration
@@ -22,11 +19,6 @@ static constexpr char LOAD_IMAGE_LABEL[] = "Load image";
 
 class MainPanelDialog : public wxWindow
 {
-private:
-    // control elements
-    wxBoxSizer *_dialogSizer;
-    wxBitmap _image;
-
 public:
     // constructor / destructor
     MainPanelDialog(wxWindow *parent, wxWindowID id);
@@ -63,8 +55,6 @@ private:
     std::unique_ptr<wxSlider> _blurSlider;
     std::unique_ptr<CustomImagePanel> _imagePanel;
     int lastSelectedSigma { 0 };
-    std::chrono::time_point<std::chrono::system_clock> lastSigmaChangedTime {std::chrono::system_clock::now() };
-    std::mutex mtx;
 
     void OnSigmaChanged(wxScrollEvent& event);
 public:
@@ -124,24 +114,4 @@ public:
     BUTTON_LOAD_IMAGE = wxID_HIGHEST + 1,
     SLIDER_SIGMA = wxID_HIGHEST + 1,
  };
-
-
-
-// cv::Mat img = cv::imread(params.ImagePath());
-
-// cv::Mat blurred;
-
-// std::cout << "sigma = " << params.Sigma() << "\n";
-// cv::GaussianBlur(img, blurred, cv::Size(61, 61), params.Sigma());
-
-// cv::namedWindow("Gaussed window", cv::WINDOW_NORMAL);
-// cv::resizeWindow("Gaussed window", 800, 400);
-
-// cv::namedWindow("Original window", cv::WINDOW_NORMAL);
-// cv::resizeWindow("Original window", 800, 400);
-
-// cv::imshow("Original window", img);
-// cv::imshow("Gaussed window", blurred);
-
-// int k = cv::waitKey(0); // Wait for a keystroke in the window
 #endif

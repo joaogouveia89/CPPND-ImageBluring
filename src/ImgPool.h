@@ -4,7 +4,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <iostream>
 #include <math.h>
 #include <opencv2/opencv.hpp>
 
