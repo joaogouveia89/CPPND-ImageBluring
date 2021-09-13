@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include<thread>
+#include <iostream>
 #include <opencv2/opencv.hpp>
 
 // https://docs.wxwidgets.org/3.0/classwx_file_name.html#a6703bfd4f587b35926d5c2949bc11918    https://docs.wxwidgets.org/3.0/classwx_image.html
