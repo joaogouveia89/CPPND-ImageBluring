@@ -56,8 +56,8 @@ LoadImageFrame::LoadImageFrame(MainFrame* window):
 void LoadImageFrame::OnLoadImageClick(wxCommandEvent& event) {
     wxFileDialog* _imageBrowseDialog = new
         wxFileDialog(
-            this, "Choose an bitmap to open", wxEmptyString, wxEmptyString,
-            "Bitmap files (*.bmp)|*.bmp;)",
+            this, "Choose an image to open", wxEmptyString, wxEmptyString,
+            "Image files (*.bmp, *.jpg, *.jpeg, *.png)|*.bmp;*.jpg;*.jpeg;*.png;)",
             wxFD_OPEN, wxDefaultPosition);
 
     // Creates a "open file" dialog with 4 file types
