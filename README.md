@@ -27,8 +27,30 @@ This application uses the open cv function(GaussBlur) to blur a input image prov
 3. Compile: `cmake .. && make`
 4. Run it: `./image-blurring`.
 
-## Project Structure
+## Classes attributes, and functions overview
 
-1. Gui: Gui use wx widgets library to create the UI elements and it's handling entitites.
-2. ImgPool: This class handles all the images treatment, also keeps track of all treated images to display to the user, the idea is to avoid unecessary computing, if the user does not want big sigma values. If user wants, for example a sigma 10, it doesn't make sense to calculate sigma = 20.
-3. Img class to store the computed image with the gauss blur function
+1. Gui: Gui use wx widgets library to create the UI elements and it's handling entitites.<br/>
+2. ImgPool
+
+    2.1 -Attributes:<br/>
+        <u><b> _images:</b></u> Array that saves during runtime the handled images<br/>
+          <u><b>_originalImage: </b></u>Mat object that holds the loaded image, so it can be passed by reference to computing function avoiding data copies(it does make difference with big images)<br/>
+          <u><b>_inputWidth: </b></u>image width<br/>
+          <u><b>_inputHeight: </b></u>image height<br/>
+          <u><b>advanceRatio: </b></u>this attribute considers the width and height of the image to decide how much images should be calculated in advance to offer a better experience to the user. So whenever he/she advances the seek bar the image is ready to be shown<br/>
+      2.2 -Methods:<br/>
+        AskFor: receives a sigma as parameter and returns the handled image for the asked sigma<br/>
+
+
+3. Img class to store the computed image with the gauss blur function<br/>
+  3.1 -Attributes:<br/>
+     <u><b> _sigma_:</b></u> Sigma value to apply the gaussian filter<br/>
+       <u><b>_result_: </b></u>Shared pointer that holds the result of computing<br/>
+       <u><b>_width: </b></u>image width<br/>
+       <u><b>_height: </b></u>image height<br/>
+       <u><b>computingDone: </b></u>Flag to check the status of computation<br/>
+  3.2 -Methods:<br/>
+    toWxBitmap: Converts mat object to wx widgets wximage object to be displayed on panel<br/>
+    Sigma: returns sigma<br/>
+    Compute: Computes the gauss filter using a async task in order to do it in parallel<br/>
+    isComputingDone: Check if compute is done<br/>

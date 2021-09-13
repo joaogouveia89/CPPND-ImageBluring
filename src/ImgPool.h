@@ -26,9 +26,7 @@ class OnImgComputingListener
 class ImgPool{
 private:
     std::vector<std::shared_ptr<Img>> _images;
-    size_t _dataSize { 0 };
     cv::Mat _originalImage;
-    double currentSigma{ 0 };
     int _inputWidth { 0 };
     int _inputHeight { 0 };
     int advanceRatio { 0 };
@@ -36,7 +34,6 @@ private:
     void CalculateAdvanceRatio();
 
 public:
-    wxImage CurrentImage();
     std::shared_ptr<Img>  AskFor(double sigma);
 
     ImgPool(std::string imagePath);
