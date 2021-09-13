@@ -20,6 +20,11 @@ This application uses the open cv function(GaussBlur) to blur a input image prov
   * Mac: same deal as make - [install Xcode command line tools](https://developer.apple.com/xcode/features/)
   * Windows: recommend using [MinGW](http://www.mingw.org/)
 
+
+## Building opencv(NOT REQUIRED)
+If your local machine does not have opencv install, open a terminal and run
+`./install.sh`
+
 ## Basic Build Instructions
 
 1. Clone this repo.
