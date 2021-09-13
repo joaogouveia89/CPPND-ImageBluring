@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <mutex>
+#include <condition_variable>
 #include <opencv2/opencv.hpp>
 
 #include "Img.h"
@@ -18,6 +19,11 @@ The idea ia to offer a more responsive experience to user as it moves the seekba
 images must be ready to be show as soon as one of them is required.
 If user moves the seekbar, this buffer has to be updated
 */
+
+class OnImgComputingListener
+{
+    virtual void OnReady(double sigma) = 0;
+};
 
 class ImgPool{
 private:
@@ -32,7 +38,7 @@ private:
     bool HasBeenCalculated(double sigma);
 public:
     wxImage CurrentImage();
-    std::shared_ptr<Img> AskFor(double sigma);
+    std::shared_ptr<Img>  AskFor(double sigma);
 
     ImgPool(std::string imagePath);
 };

@@ -108,6 +108,7 @@ void BlurImageFrame::OnSigmaChanged(wxScrollEvent& event)
     int currentPosition = event.GetPosition();
     if(currentPosition != lastSelectedSigma && _blurSlider->GetValue() == currentPosition){
         lastSelectedSigma = currentPosition;
+        
         _imagePanel->ReplaceImage(_imagePool->AskFor(currentPosition));
     }
 }

@@ -18,28 +18,26 @@ ImgPool::ImgPool(std::string imagePath)
     }
 }
 
-std::shared_ptr<Img> ImgPool::AskFor(double sigma)
+std::shared_ptr<Img>  ImgPool::AskFor(double sigma)
 {
-    if((sigma - 2) >= 0 && std::find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img) { return img->Sigma() == (sigma - 2); } ) == _images.end())
+    std::vector<double> sigmas{ sigma - 2, sigma - 1, sigma, sigma + 1, sigma + 2 };
+
+    for(auto img : _images)
     {
-        _images.emplace_back(std::move(std::make_shared<Img>(_originalImage, sigma - 2, _originalImage->rows, _originalImage->cols)));
+        auto sigmaPosition = find(sigmas.begin(), sigmas.end(), img->Sigma());
+        if(sigmaPosition != sigmas.end())
+        {
+            sigmas.erase(sigmaPosition);
+        }
     }
 
-    if((sigma - 1) >= 0 && std::find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img) { return img->Sigma() == (sigma - 1); }) == _images.end())
+    for(auto sigma : sigmas)
     {
-        _images.emplace_back(std::move(std::make_shared<Img>(_originalImage, sigma - 1, _originalImage->rows, _originalImage->cols)));
+        if(sigma >= 0)
+        {
+            _images.emplace_back(std::move(std::make_shared<Img>(_originalImage, sigma, _originalImage->rows, _originalImage->cols)));
+        }
     }
-
-    if(std::find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img) { return img->Sigma() == (sigma + 1); }) == _images.end())
-    {
-        _images.emplace_back(std::move(std::make_shared<Img>(_originalImage, sigma + 1, _originalImage->rows, _originalImage->cols)));
-    }
-
-    if(std::find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img) { return img->Sigma() == (sigma + 2); }) == _images.end())
-    {
-        _images.emplace_back(std::move(std::make_shared<Img>(_originalImage, sigma + 2, _originalImage->rows, _originalImage->cols)));
-    }
-    
 
     auto askedIt = find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img){ return img->Sigma() == sigma; });
 
@@ -51,7 +49,7 @@ std::shared_ptr<Img> ImgPool::AskFor(double sigma)
     }
     else
     {
-       asked = *_images.begin();
+       asked = *_images.begin(); // if no image has been found, return the original one
     }
     
     return asked;
