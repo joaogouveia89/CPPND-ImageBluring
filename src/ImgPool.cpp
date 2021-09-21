@@ -14,10 +14,8 @@ ImgPool::ImgPool(std::string imagePath)
         filterRatio = 122*_inputWidth/_inputHeight;
 
         CalculateAdvanceRatio();
-
         split(originalImage, rgbChannels);
         _images.emplace_back(std::move(std::make_shared<Img>(originalImage)));
-        
         _originalImageParts = std::make_shared<std::vector<cv::Mat>>(rgbChannels);
 
         for(int i = 1; i < advanceRatio; ++i){
@@ -42,7 +40,6 @@ void ImgPool::CalculateAdvanceRatio(){
 std::shared_ptr<Img> ImgPool::AskFor(double sigma)
 {
     std::vector<double> sigmas;
-
     for(int i = 0; i < advanceRatio; ++i){
         if(i == 0){
             sigmas.emplace_back(sigma);
@@ -51,7 +48,6 @@ std::shared_ptr<Img> ImgPool::AskFor(double sigma)
             sigmas.emplace_back(sigma + i);
         }
     }
-
     for(auto img : _images)
     {
         auto sigmaPosition = find(sigmas.begin(), sigmas.end(), img->Sigma());
@@ -60,7 +56,6 @@ std::shared_ptr<Img> ImgPool::AskFor(double sigma)
             sigmas.erase(sigmaPosition);
         }
     }
-
     for(auto sigma : sigmas)
     {
         if(sigma >= 0)
@@ -68,9 +63,7 @@ std::shared_ptr<Img> ImgPool::AskFor(double sigma)
             _images.emplace_back(std::move(std::make_shared<Img>(_originalImageParts, sigma, filterRatio)));
         }
     }
-
     auto askedIt = find_if(_images.begin(), _images.end(), [&sigma](std::shared_ptr<Img> img){ return img->Sigma() == sigma; });
-
     std::shared_ptr<Img> asked;
 
     if(askedIt != _images.end() && (*askedIt)->isComputingDone())
