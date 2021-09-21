@@ -25,10 +25,40 @@ wxImage Img::toWxBitmap(const int width, const int height) const{
 void Img::Compute(cv::Mat* originalImage)
 {
     int filterRatio = 122*_width/_height;
-    std::future<void> result = std::async(std::launch::async, [&filterRatio](cv::Mat* original, Img* img) {
+    std::vector<cv::Mat> rgbChannels(3);
+    split(*originalImage, rgbChannels);
+    std::future<cv::Mat> resultR = std::async([&filterRatio](cv::Mat original, Img* img) {
         cv::Mat blurred;
-        cv::GaussianBlur(*original, blurred,  cv::Size(filterRatio, filterRatio), img->Sigma());
-         img->_result = std::make_shared<cv::Mat>(blurred);
-         img->computingDone = true;
-    }, originalImage, this);
+        cv::GaussianBlur(original, blurred,  cv::Size(filterRatio, filterRatio), img->Sigma());
+        return blurred;
+    }, std::move(rgbChannels[0]), this);
+
+    std::future<cv::Mat> resultG = std::async([&filterRatio](cv::Mat original, Img* img) {
+        cv::Mat blurred;
+        cv::GaussianBlur(original, blurred,  cv::Size(filterRatio, filterRatio), img->Sigma());
+        return blurred;
+    }, std::move(rgbChannels[1]), this);
+
+    std::future<cv::Mat> resultB = std::async([&filterRatio](cv::Mat original, Img* img) {
+        cv::Mat blurred;
+        cv::GaussianBlur(original, blurred,  cv::Size(filterRatio, filterRatio), img->Sigma());
+        return blurred;
+    }, std::move(rgbChannels[2]), this);
+
+    std::future<void> mergeTask = std::async([](std::future<cv::Mat> ftrR, std::future<cv::Mat> ftrG, std::future<cv::Mat> ftrB, Img* img){
+        std::vector<cv::Mat> channels;
+        cv::Mat result;
+        ftrR.wait();
+        ftrG.wait();
+        ftrB.wait();
+
+        channels.emplace_back(ftrR.get());
+        channels.emplace_back(ftrG.get());
+        channels.emplace_back(ftrB.get());
+        cv::merge(channels, result);
+
+        img->_result = std::make_shared<cv::Mat>(result);
+
+        img->computingDone = true;
+    }, std::move(resultR), std::move(resultG), std::move(resultB), this);
 }
