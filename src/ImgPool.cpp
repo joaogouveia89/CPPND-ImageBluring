@@ -4,16 +4,24 @@
 ImgPool::ImgPool(std::string imagePath)
 {
 
-    _originalImage = cv::imread(imagePath);
-    if (_originalImage.data != NULL) /* see https://docs.opencv.org/4.5.2/d4/da8/group__imgcodecs.html#ga288b8b3da0892bd651fce07b3bbd3a56 */
+    cv::Mat originalImage = cv::imread(imagePath);
+    if (originalImage.data != NULL) /* see https://docs.opencv.org/4.5.2/d4/da8/group__imgcodecs.html#ga288b8b3da0892bd651fce07b3bbd3a56 */
     {
-        _inputWidth = _originalImage.rows;
-        _inputHeight = _originalImage.cols;
+        _inputWidth = originalImage.rows;
+        _inputHeight = originalImage.cols;
+        std::vector<cv::Mat> rgbChannels(3);
+
+        filterRatio = 122*_inputWidth/_inputHeight;
 
         CalculateAdvanceRatio();
 
-        for(int i = 0; i < advanceRatio; ++i){
-            _images.emplace_back(std::move(std::make_shared<Img>(&_originalImage, i, _inputWidth, _inputHeight)));
+        split(originalImage, rgbChannels);
+        _images.emplace_back(std::move(std::make_shared<Img>(originalImage)));
+        
+        _originalImageParts = std::make_shared<std::vector<cv::Mat>>(rgbChannels);
+
+        for(int i = 1; i < advanceRatio; ++i){
+            _images.emplace_back(std::move(std::make_shared<Img>(_originalImageParts, i, filterRatio)));
         }
     }
     else{
@@ -34,7 +42,6 @@ void ImgPool::CalculateAdvanceRatio(){
 std::shared_ptr<Img> ImgPool::AskFor(double sigma)
 {
     std::vector<double> sigmas;
-    int s;
 
     for(int i = 0; i < advanceRatio; ++i){
         if(i == 0){
@@ -58,7 +65,7 @@ std::shared_ptr<Img> ImgPool::AskFor(double sigma)
     {
         if(sigma >= 0)
         {
-            _images.emplace_back(std::move(std::make_shared<Img>(&_originalImage, sigma, _originalImage.rows, _originalImage.cols)));
+            _images.emplace_back(std::move(std::make_shared<Img>(_originalImageParts, sigma, filterRatio)));
         }
     }
 

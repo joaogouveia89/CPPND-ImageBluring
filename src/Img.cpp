@@ -1,16 +1,20 @@
 #include "Img.h"
 
-Img::Img(cv::Mat* originalImage, double sigma, int width, int height) :
-_sigma(sigma), _width(width), _height(height){
-     if(sigma != 0) /* if sigma is zero, the object corresponds to original image, so no computing is necessary */
+Img::Img(std::shared_ptr<std::vector<cv::Mat>> originalImageParts, double sigma, int filterRatio) :
+_sigma(sigma), _filterRatio(filterRatio){
+     if(sigma > 0) /* if sigma is zero, the object corresponds to original image, so no computing is necessary */
      {
-         Compute(originalImage);
-     }
-     else{
-         computingDone = true;
-         _result = std::make_shared<cv::Mat>(*originalImage);
+         Compute(originalImageParts);
+     }else{
+         throw "If you want to set the sigma = 0 image, use the Img::Img(cv::Mat originalImage) constructor!";
      }
  }
+
+Img::Img(cv::Mat originalImage){
+    _result = std::make_shared<cv::Mat>(originalImage);
+    computingDone = true;
+}
+
 
 wxImage Img::toWxBitmap(const int width, const int height) const{
     cv::Mat toReturnPrev = *_result.get();
@@ -22,28 +26,25 @@ wxImage Img::toWxBitmap(const int width, const int height) const{
     return unhandled.Rescale(width, height, wxIMAGE_QUALITY_HIGH);
 }
 
-void Img::Compute(cv::Mat* originalImage)
+void Img::Compute(std::shared_ptr<std::vector<cv::Mat>> originalImageParts)
 {
-    int filterRatio = 122*_width/_height;
-    std::vector<cv::Mat> rgbChannels(3);
-    split(*originalImage, rgbChannels);
-    std::future<cv::Mat> resultR = std::async([&filterRatio](cv::Mat original, Img* img) {
+    std::future<cv::Mat> resultR = std::async([](cv::Mat* original, Img* img) {
         cv::Mat blurred;
-        cv::GaussianBlur(original, blurred,  cv::Size(filterRatio, filterRatio), img->Sigma());
+        cv::GaussianBlur(*original, blurred,  cv::Size(img->_filterRatio, img->_filterRatio), img->Sigma());
         return blurred;
-    }, std::move(rgbChannels[0]), this);
+    }, &(originalImageParts.get()->at(0)), this);
 
-    std::future<cv::Mat> resultG = std::async([&filterRatio](cv::Mat original, Img* img) {
+    std::future<cv::Mat> resultG = std::async([](cv::Mat* original, Img* img) {
         cv::Mat blurred;
-        cv::GaussianBlur(original, blurred,  cv::Size(filterRatio, filterRatio), img->Sigma());
+        cv::GaussianBlur(*original, blurred,  cv::Size(img->_filterRatio, img->_filterRatio), img->Sigma());
         return blurred;
-    }, std::move(rgbChannels[1]), this);
+    }, &(originalImageParts.get()->at(1)), this);
 
-    std::future<cv::Mat> resultB = std::async([&filterRatio](cv::Mat original, Img* img) {
+    std::future<cv::Mat> resultB = std::async([](cv::Mat* original, Img* img) {
         cv::Mat blurred;
-        cv::GaussianBlur(original, blurred,  cv::Size(filterRatio, filterRatio), img->Sigma());
+        cv::GaussianBlur(*original, blurred,  cv::Size(img->_filterRatio, img->_filterRatio), img->Sigma());
         return blurred;
-    }, std::move(rgbChannels[2]), this);
+    }, &(originalImageParts.get()->at(2)), this);
 
     std::future<void> mergeTask = std::async([](std::future<cv::Mat> ftrR, std::future<cv::Mat> ftrG, std::future<cv::Mat> ftrB, Img* img){
         std::vector<cv::Mat> channels;

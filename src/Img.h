@@ -14,21 +14,21 @@
 class Img
 {
 private:
-    double _sigma;
+    double _sigma { 0 };
     std::shared_ptr<cv::Mat> _result { nullptr };
-    int _width { 0 };
-    int _height { 0 };
+    int _filterRatio { 0 };
 
     bool computingDone { false };
     
 public:
-    Img(cv::Mat* originalImage, double sigma, int width, int height);
+    Img(std::shared_ptr<std::vector<cv::Mat>> originalImageParts, double sigma, int filterRatio);
+    Img(cv::Mat originalImage);
 
     wxImage toWxBitmap(const int parentWidth, const int parentHeight) const;
 
     double Sigma() const{ return _sigma; }
 
-    void Compute(cv::Mat* originalImage);
+    void Compute(std::shared_ptr<std::vector<cv::Mat>> originalImageParts);
 
     bool isComputingDone() const { return computingDone; }
 };

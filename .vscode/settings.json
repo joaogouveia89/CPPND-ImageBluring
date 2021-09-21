@@ -87,7 +87,8 @@
         "queue": "cpp",
         "semaphore": "cpp",
         "stack": "cpp",
-        "stop_token": "cpp"
+        "stop_token": "cpp",
+        "img.h": "c"
     },
     "cmake.configureOnOpen": false
 }
